@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>VetForm — 최종 확인 및 제출</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    /* 제출 버튼 로딩 상태 */
+    .vf-btn--submitting {
+      background: var(--color-text-disabled);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    /* 성공 화면 */
+    #success-screen { display: none; }
+    /* 실패 안내 */
+    .vf-fail-box {
+      background: #FEF2F2;
+      border: 1.5px solid #FECACA;
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin: 12px 20px 0;
+      font-size: 14px;
+      color: #991B1B;
+      line-height: 1.6;
+    }
+    /* 요약 섹션 레이블 */
+    .summary-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 14px 18px 6px;
+      border-top: 1px solid var(--color-border);
+      margin-top: 4px;
+    }
+    .summary-section-label:first-child {
+      border-top: none;
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+<header class="vf-header">
+  <div>
+    <div class="vf-header__logo">🐾 VetForm</div>
+    <div class="vf-header__subtitle">최종 확인 및 제출</div>
+  </div>
+</header>
+<div class="vf-progress">
+  <div class="vf-progress__bar" id="progressBar" style="width:100%"></div>
+</div>
+
+<!-- ===== 메인 화면 ===== -->
+<div id="main-screen">
+  <div class="vf-page">
+
+    <div class="vf-page-title vf-mt-md">
+      <div class="vf-page-title__h1">✅ 문진 내용 확인</div>
+      <div class="vf-page-title__desc">아래 내용을 확인하시고 제출해주세요.</div>
+    </div>
+
+    <!-- 오류 메시지 -->
+    <div id="fail-box" class="vf-fail-box" style="display:none">
+      <strong>전송에 실패했습니다.</strong><br>
+      잠시 후 다시 시도해주세요. 3회 재시도 후에도 실패하면 내용이 임시저장됩니다.
+    </div>
+
+    <!-- 요약 카드 -->
+    <div class="vf-summary-card vf-mt-md" id="summary-card">
+      <!-- JS로 채워짐 -->
+    </div>
+
+    <!-- 동의 안내 -->
+    <div class="vf-section vf-mt-md" style="background:var(--color-primary-light);border-radius:var(--radius-md);padding:16px 18px;margin:12px 20px 0">
+      <p style="font-size:13px;color:var(--color-primary);line-height:1.7">
+        📌 제출하신 문진 내용은 진료 목적으로만 사용되며, 수의사 선생님께 안전하게 전달됩니다.
+      </p>
+    </div>
+
+  </div><!-- /.vf-page -->
+
+  <div class="vf-bottom-bar">
+    <button class="vf-btn vf-btn--secondary" onclick="history.back()">← 이전</button>
+    <button class="vf-btn vf-btn--primary" id="btn-submit" onclick="handleSubmit()">
+      제출하기
+    </button>
+  </div>
+</div>
+
+<!-- ===== 성공 화면 ===== -->
+<div id="success-screen">
+  <div class="vf-success">
+    <div class="vf-success__icon">🎉</div>
+    <div class="vf-success__title">문진 제출 완료!</div>
+    <div class="vf-success__desc">
+      수의사 선생님께 문진 내용이 전달되었습니다.<br>
+      잠시 후 진료실로 안내해드리겠습니다.
+    </div>
+    <div style="margin-top:8px;padding:14px 20px;background:var(--color-bg);border-radius:var(--radius-md);font-size:13px;color:var(--color-text-secondary);text-align:center;width:100%">
+      이 화면을 닫으셔도 됩니다.
+    </div>
+  </div>
+</div>
+
+<script>
+/* utils.js 인라인 */
+/**
+ * VetForm — utils.js
+ * 공통 유틸리티: sessionStorage 관리, Slack 용어 변환, 라우팅 헬퍼
+ */
+
+
+// ============================================================
+// 1. sessionStorage 헬퍼
+// ============================================================
+
+const VF_PREFIX = 'vetform_';
+
+const Storage = {
+  /** 섹션 데이터 저장 */
+  set(section, data) {
+    try {
+      sessionStorage.setItem(VF_PREFIX + section, JSON.stringify(data));
+    } catch (e) {
+      console.warn('[VetForm] sessionStorage 저장 실패, localStorage 폴백:', e);
+      try { localStorage.setItem(VF_PREFIX + section, JSON.stringify(data)); } catch (_) {}
+    }
+  },
+
+  /** 섹션 데이터 불러오기 */
+  get(section) {
+    try {
+      const v = sessionStorage.getItem(VF_PREFIX + section);
+      return v ? JSON.parse(v) : null;
+    } catch (e) {
+      try {
+        const v = localStorage.getItem(VF_PREFIX + section);
+        return v ? JSON.parse(v) : null;
+      } catch (_) { return null; }
+    }
+  },
+
+  /** 전체 VetForm 데이터 병합하여 반환 */
+  getAll() {
+    const result = {};
+    const keys = [
+      'signalment', 'chief_complaint', 'systems_review',
+      'history', 'prevention', 'diet_env', 'memo',
+      'branch_vomiting', 'branch_diarrhea', 'branch_anorexia',
+      'branch_lethargy', 'branch_dyspnea', 'branch_cough',
+      'branch_urinary', 'branch_lameness', 'branch_skin',
+      'branch_ear', 'branch_eye', 'branch_abdomen',
+      'branch_seizure', 'branch_syncope', 'branch_dental',
+      'branch_nasal'
+    ];
+    keys.forEach(k => {
+      const v = this.get(k);
+      if (v) result[k] = v;
+    });
+    return result;
+  },
+
+  /** 임시저장 (제출 실패 시) */
+  saveTemp(data) {
+    try {
+      localStorage.setItem(VF_PREFIX + 'temp_submission', JSON.stringify({
+        data,
+        savedAt: new Date().toISOString()
+      }));
+    } catch (e) {}
+  },
+
+  /** 임시저장 불러오기 */
+  getTemp() {
+    try {
+      const v = localStorage.getItem(VF_PREFIX + 'temp_submission');
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  },
+
+  /** 임시저장 삭제 */
+  clearTemp() {
+    try { localStorage.removeItem(VF_PREFIX + 'temp_submission'); } catch (e) {}
+  },
+
+  /** 전체 초기화 */
+  clearAll() {
+    try {
+      Object.keys(sessionStorage)
+        .filter(k => k.startsWith(VF_PREFIX))
+        .forEach(k => sessionStorage.removeItem(k));
+    } catch (e) {}
+  }
+};
+
+// ============================================================
+// 2. Branch 라우팅
+// ============================================================
+
+/** 계통 리뷰 선택 → branch 파일명 매핑 */
+const BRANCH_MAP = {
+  'anorexia':  { file: 'anorexia.html',  label: '식욕부진',     emoji: '🍽️' },
+  'vomiting':  { file: 'vomiting.html',  label: '구토',         emoji: '🤢' },
+  'diarrhea':  { file: 'diarrhea.html',  label: '설사',         emoji: '💩' },
+  'urinary':   { file: 'urinary.html',   label: '배뇨 이상',    emoji: '🐾' },
+  'dyspnea':   { file: 'dyspnea.html',   label: '호흡곤란',     emoji: '😮‍💨' },
+  'lameness':  { file: 'lameness.html',  label: '파행',         emoji: '🦵' },
+  'lethargy':  { file: 'lethargy.html',  label: '기력저하',     emoji: '😴' },
+  'seizure':   { file: 'seizure.html',   label: '발작',         emoji: '🧠' },
+  'syncope':   { file: 'syncope.html',   label: '기절',         emoji: '😵' },
+  'abdomen':   { file: 'abdomen.html',   label: '복부 팽만',    emoji: '🫃' },
+  'skin':      { file: 'skin.html',      label: '피부 이상',    emoji: '🔴' },
+  'ear':       { file: 'ear.html',       label: '귀 이상',      emoji: '👂' },
+  'eye':       { file: 'eye.html',       label: '눈 이상',      emoji: '👁️' },
+  'cough':     { file: 'cough.html',     label: '기침',         emoji: '😮' },
+  'dental':    { file: 'dental.html',    label: '구강·치과 이상',emoji: '🦷' },
+  'nasal':     { file: 'nasal.html',     label: '콧물·재채기',  emoji: '🤧' },
+};
+
+const Router = {
+  /**
+   * 선택된 branch 목록 저장
+   * @param {string[]} branchKeys - BRANCH_MAP의 키 배열
+   */
+  setBranches(branchKeys) {
+    Storage.set('routing', {
+      branches: branchKeys,
+      completed: [],
+      currentIndex: 0
+    });
+  },
+
+  /** 현재 라우팅 상태 */
+  getRouting() {
+    return Storage.get('routing') || { branches: [], completed: [], currentIndex: 0 };
+  },
+
+  /** branch 완료 처리 후 다음으로 이동 */
+  completeCurrent() {
+    const routing = this.getRouting();
+    const current = routing.branches[routing.currentIndex];
+    if (current && !routing.completed.includes(current)) {
+      routing.completed.push(current);
+    }
+    routing.currentIndex += 1;
+    Storage.set('routing', routing);
+
+    if (routing.currentIndex < routing.branches.length) {
+      const next = routing.branches[routing.currentIndex];
+      const info = BRANCH_MAP[next];
+      if (info) {
+        window.location.href = '../branches/' + info.file;
+      }
+    } else {
+      window.location.href = '../confirm.html';
+    }
+  },
+
+  /** branch 건너뛰기 */
+  skipCurrent() {
+    this.completeCurrent(); // 완료 없이 index만 올림
+  },
+
+  /** 추가 branch 동적 삽입 (동반 증상에서 추천) */
+  addBranchIfMissing(branchKey) {
+    const routing = this.getRouting();
+    if (!routing.branches.includes(branchKey) && !routing.completed.includes(branchKey)) {
+      // 현재 이후에 삽입
+      routing.branches.splice(routing.currentIndex + 1, 0, branchKey);
+      Storage.set('routing', routing);
+      return true;
+    }
+    return false;
+  },
+
+  /** 진행률 (0~1) */
+  getProgress() {
+    const routing = this.getRouting();
+    const total = routing.branches.length;
+    if (total === 0) return 1;
+    return routing.completed.length / total;
+  },
+
+  /** 현재 branch key */
+  getCurrentKey() {
+    const routing = this.getRouting();
+    return routing.branches[routing.currentIndex] || null;
+  }
+};
+
+// ============================================================
+// 3. Slack 용어 변환
+// ============================================================
+
+/**
+ * 보호자 표현 → 임상 용어 변환 사전
+ * 값이 null이면 그대로 출력
+ */
+const TERM_MAP = {
+  // 구토 관련
+  '노란 액체(담즙)':          'bilious fluid',
+  '투명한 거품/액체':          'clear foam/fluid',
+  '소화 안 된 음식':           'undigested food',
+  '소화된 음식':               'digested food',
+  '이물질':                   'foreign material',
+  '구토 시 매우 힘들어 보임':   'severe retching/straining',
+  '헛구역질':                  'retching',
+
+  // 배변 관련
+  '배에 힘을 주는 모습':        'tenesmus',
+  '변에 섞임':                 'hematochezia (mixed)',
+  '변 위에 묻어남':            'hematochezia (coating)',
+  '검은색':                    'melena',
+  '붉은색(혈변)':              'hematochezia',
+  '점액 섞임':                 'mucoid stool',
+  '물처럼':                    'watery diarrhea',
+  '죽처럼':                    'semi-liquid stool',
+
+  // 호흡 관련
+  '배를 많이 씀':              'abdominal breathing',
+  '입을 벌리고 숨쉼':          'open-mouth breathing',
+  '목을 빼고 숨쉼':            'orthopnea/neck extension',
+  '쌕쌕 소리 남':              'wheezing',
+  '그르렁 소리 남':            'stertor',
+  '누울 때 악화':              'orthopnea',
+  '운동/흥분 시 악화':         'exercise intolerance',
+
+  // 기침 관련
+  '컹컹(건성)':                'dry/harsh cough',
+  '캑캑(뭔가 걸린 듯)':        'productive-sounding cough',
+  '거위 울음소리':             'goose-honk cough (tracheal collapse)',
+  '가래 끓는 소리':            'moist/productive cough',
+  '역재채기':                  'reverse sneezing',
+  '사레들림':                  'aspiration',
+
+  // 신경계 관련
+  '머리가 한쪽으로 기울어짐':   'head tilt',
+  '눈이 떨리거나 빠르게 움직임':'nystagmus',
+  '비틀거림':                  'ataxia',
+  '온몸이 뻣뻣하게 굳음':      'tonic seizure',
+  '온몸을 떰':                 'clonic seizure',
+  '한쪽만 떨거나 움직임':       'focal seizure',
+  '씹는 동작 반복':            'masticatory automatism',
+  '멍하게 있음':               'absence/staring seizure',
+  '발작 전 이상 행동':         'pre-ictal aura',
+  '발작 후 멍함':              'post-ictal phase',
+  '갑자기 푹 쓰러짐':          'sudden collapse (syncope)',
+
+  // 순환기 관련
+  '잇몸 파란색':               'cyanosis',
+  '잇몸 창백':                 'pale mucous membranes',
+  '잇몸 흰색':                 'white/blanched MM',
+  '잇몸 분홍(정상)':           'pink MM (WNL)',
+  '운동 불내성':               'exercise intolerance',
+  '기절':                      'syncope',
+
+  // 배뇨 관련
+  '자주 봄':                   'pollakiuria',
+  '조금씩 봄':                 'oliguria',
+  '못 보는 것 같음':           'anuria/urethral obstruction suspected',
+  '소변 볼 때 힘 줌':          'dysuria/stranguria',
+  '붉은색·분홍색':             'hematuria',
+  '음수량 증가':               'polydipsia',
+
+  // 피부 관련
+  '빨개짐':                    'erythema',
+  '딱지':                      'crusting',
+  '진물':                      'exudate/weeping',
+  '뾰루지·농포':               'papule/pustule',
+  '비듬·각질':                 'scaling',
+  '덩어리·혹':                 'mass/nodule',
+  '가려워함(심하게)':          'severe pruritus',
+  '가려워함(약간)':            'mild pruritus',
+
+  // 귀 관련
+  '귀를 자주 긁음':            'otic pruritus',
+  '머리를 흔듦':               'head shaking',
+  '귀에서 냄새 남':            'malodorous ear discharge',
+  '귀가 풍선처럼 부풀어 있음': 'aural hematoma',
+
+  // 눈 관련
+  '눈을 못 뜸·찡그림':         'blepharospasm',
+  '눈이 흐리거나 뿌옇게 보임': 'corneal opacity/clouding',
+  '눈이 튀어나온 것 같음':     'exophthalmos/proptosis',
+  '눈이 작아진 것 같음':       'enophthalmos/microphthalmos',
+  '빛을 피하거나 눈부셔 함':   'photophobia',
+
+  // 소화기 관련
+  '복부 팽만':                 'abdominal distension',
+  '이급후증':                  'tenesmus',
+  '황달':                      'icterus/jaundice',
+  '배를 만지면 싫어함':        'abdominal pain/guarding',
+  '배가 불러 보임':            'abdominal distension',
+  '북소리처럼 울림':           'tympanic sound on percussion',
+
+  // 전신
+  '기력 처짐':                 'lethargy',
+  '많이 처짐':                 'severe depression',
+  '거의 움직이지 않음':        'obtundation',
+  '체중 감소':                 'weight loss',
+  '숨으려는 행동':             'hiding behavior',
+};
+
+/**
+ * 보호자 표현을 임상 용어로 변환
+ * @param {string} text - 원본 텍스트
+ * @returns {string} 변환된 텍스트 (매핑 없으면 원본 반환)
+ */
+function toClinicTerm(text) {
+  if (!text) return text;
+  let result = text;
+  Object.entries(TERM_MAP).forEach(([kor, eng]) => {
+    if (result.includes(kor)) {
+      result = result.replace(kor, `${kor}(${eng})`);
+    }
+  });
+  return result;
+}
+
+// ============================================================
+// 4. Slack 메시지 빌더
+// ============================================================
+
+function buildSlackMessage(allData) {
+  const { signalment: s, chief_complaint: cc, systems_review: sr, history: h,
+          prevention: pv, diet_env: de, memo } = allData;
+
+  const lines = [];
+
+  // 헤더
+  lines.push('🐾 *신규 문진 접수*');
+  lines.push('─'.repeat(28));
+
+  // Signalment
+  if (s) {
+    const sex = s.sex ? (s.sex === '수컷' ? 'M' : 'F') : '';
+    const neuter = s.neutered === '했음' ? 'N' : s.neutered === '안 함' ? 'I' : '';
+    const age = s.age ? `${s.age}${s.age_unit === '개월' ? 'mo' : 'y'}` : '';
+    const sexStr = [sex, neuter].filter(Boolean).join('/');
+    lines.push(`*환자명:* ${s.name || '-'}  (${[sexStr, age, s.breed].filter(Boolean).join(', ')})`);
+    lines.push(`*보호자:* ${s.owner_name || '-'}`);
+    if (s.weight) lines.push(`*체중:* ${s.weight} kg`);
+  }
+
+  // Chief Complaint
+  if (cc) {
+    lines.push('');
+    lines.push(`*주호소:* ${cc.reason || '-'}`);
+    const duration = cc.since ? `(${cc.since})` : '';
+    const severity = cc.severity || '';
+    const course = cc.course || '';
+    lines.push(`*경과:* ${[duration, course, severity].filter(Boolean).join(' · ')}`);
+    if (cc.recurrence === '재발' && cc.recurrence_when) {
+      lines.push(`*재발:* ${cc.recurrence_when}`);
+    }
+  }
+
+  // Systems Review — 선택된 증상
+  if (sr && sr.selected && sr.selected.length > 0) {
+    lines.push('');
+    const labels = sr.selected.map(k => BRANCH_MAP[k] ? BRANCH_MAP[k].label : k);
+    lines.push(`*계통 리뷰:* ${labels.join(', ')}`);
+  }
+
+  // Branch 데이터
+  const branchKeys = Object.keys(allData).filter(k => k.startsWith('branch_'));
+  branchKeys.forEach(key => {
+    const branchKey = key.replace('branch_', '');
+    const info = BRANCH_MAP[branchKey];
+    const data = allData[key];
+    if (!data || !info) return;
+
+    lines.push('');
+    lines.push(`*[${info.label}]*`);
+    formatBranchForSlack(branchKey, data, lines);
+  });
+
+  // 과거력
+  if (h) {
+    lines.push('');
+    lines.push('*[과거력 / 투약]*');
+    if (h.conditions) lines.push(`• 기저질환: ${h.conditions}`);
+    if (h.surgeries)  lines.push(`• 수술이력: ${h.surgeries}`);
+    if (h.medications)lines.push(`• 투약: ${h.medications}`);
+    if (h.allergies)  lines.push(`• 알레르기: ${h.allergies}`);
+  }
+
+  // 예방
+  if (pv) {
+    const pvItems = [];
+    if (pv.vaccine)   pvItems.push(`백신 ${pv.vaccine}`);
+    if (pv.heartworm) pvItems.push(`심장사상충 ${pv.heartworm}`);
+    if (pv.parasite)  pvItems.push(`외부기생충 ${pv.parasite}`);
+    if (pvItems.length) lines.push(`*예방:* ${pvItems.join(' / ')}`);
+  }
+
+  // 식이·환경
+  if (de) {
+    const deItems = [];
+    if (de.diet)       deItems.push(`식이 ${de.diet}`);
+    if (de.living)     deItems.push(de.living);
+    if (de.housemates) deItems.push(`동거동물 ${de.housemates}`);
+    if (de.env_change) deItems.push(`환경변화 있음`);
+    if (deItems.length) lines.push(`*환경:* ${deItems.join(' / ')}`);
+  }
+
+  // 추가 메모
+  if (memo && memo.text) {
+    lines.push('');
+    lines.push(`*보호자 추가 메모:* ${memo.text}`);
+  }
+
+  lines.push('');
+  lines.push(`_문진 시각: ${new Date().toLocaleString('ko-KR')}_`);
+
+  return lines.join('\n');
+}
+
+/**
+ * Branch 데이터를 Slack 포맷으로 변환
+ * 각 branch는 key-value 객체이며, 임상 용어로 변환하여 출력
+ */
+function formatBranchForSlack(branchKey, data, lines) {
+  // 공통: 주요 필드 순서대로 출력
+  Object.entries(data).forEach(([key, value]) => {
+    if (!value || key === 'notes') return;
+    if (Array.isArray(value)) {
+      const converted = value.map(v => toClinicTerm(v)).join(', ');
+      lines.push(`• ${fieldLabel(key)}: ${converted}`);
+    } else if (typeof value === 'string' && value !== '없음' && value !== '정상') {
+      lines.push(`• ${fieldLabel(key)}: ${toClinicTerm(value)}`);
+    }
+  });
+  if (data.notes) {
+    lines.push(`• 추가: ${data.notes}`);
+  }
+}
+
+/** 내부 필드명 → 한국어 레이블 */
+function fieldLabel(key) {
+  const map = {
+    since: '언제부터', frequency: '빈도', pattern: '패턴',
+    content: '내용물', blood: '혈액', severity: '중증도',
+    appetite: '식욕', water: '음수', energy: '기력',
+    foreign_body: '이물섭취', toxin: '독성물질', notes: '추가',
+    stool_consistency: '변굳기', stool_color: '변색깔',
+    mucus: '점액', hematochezia: '혈변',
+    location: '부위', characteristics: '병변양상', pruritus: '소양감',
+    odor: '냄새', side: '어느쪽', discharge_color: '분비물색깔',
+    onset: '발생계기', limb: '어느다리', wbc: '방광',
+    urine_color: '소변색깔', dysuria: '배뇨시통증',
+    duration: '지속시간', postictal: '발작후 상태', aura: '전구증상',
+    collapse_type: '쓰러질때모습', recovery: '회복시간',
+  };
+  return map[key] || key;
+}
+
+// ============================================================
+// 5. Google Sheets 행 빌더
+// ============================================================
+
+function buildSheetsRow(allData) {
+  const s = allData.signalment || {};
+  const cc = allData.chief_complaint || {};
+  const sr = allData.systems_review || {};
+
+  const selectedBranches = (sr.selected || [])
+    .map(k => BRANCH_MAP[k]?.label || k)
+    .join(', ');
+
+  return {
+    timestamp:      new Date().toISOString(),
+    patient_name:   s.name || '',
+    owner_name:     s.owner_name || '',
+    species:        s.species || '',
+    breed:          s.breed || '',
+    age:            s.age ? `${s.age}${s.age_unit}` : '',
+    sex:            s.sex || '',
+    neutered:       s.neutered || '',
+    weight:         s.weight || '',
+    chief_complaint:cc.reason || '',
+    duration:       cc.since || '',
+    systems:        selectedBranches,
+    conditions:     (allData.history || {}).conditions || '',
+    medications:    (allData.history || {}).medications || '',
+    raw_json:       JSON.stringify(allData)
+  };
+}
+
+// ============================================================
+// 6. 제출 (Cloudflare Workers 경유)
+// ============================================================
+
+/**
+ * Workers URL — 배포 후 실제 URL로 교체
+ * 개발 중에는 이 값을 직접 수정하거나 config 파일로 분리 가능
+ */
+const WORKERS_URL = 'https://hist-relay.simpson9713.workers.dev';
+
+/**
+ * 문진 데이터 제출 (재시도 3회)
+ * @param {object} allData
+ * @returns {Promise<{ok: boolean, error?: string}>}
+ */
+async function submitForm(allData) {
+  const slackText  = buildSlackMessage(allData);
+  const sheetsRow  = buildSheetsRow(allData);
+  const payload    = { slack: slackText, sheets: sheetsRow };
+
+  let lastError = null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(WORKERS_URL + '/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        Storage.clearTemp();
+        return { ok: true };
+      }
+      lastError = `HTTP ${res.status}`;
+    } catch (e) {
+      lastError = e.message;
+    }
+    if (attempt < 3) await sleep(attempt * 1200);
+  }
+
+  // 3회 실패 → 로컬 임시저장
+  Storage.saveTemp(allData);
+  return { ok: false, error: lastError };
+}
+
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+// ============================================================
+// 7. UI 헬퍼
+// ============================================================
+
+/**
+ * 즉시 내원 알림 표시
+ * @param {HTMLElement} container - 알림을 삽입할 부모 엘리먼트
+ * @param {string} message
+ */
+function showUrgentAlert(container, message) {
+  // 중복 방지
+  if (container.querySelector('.vf-alert-urgent')) return;
+  const el = document.createElement('div');
+  el.className = 'vf-alert-urgent';
+  el.innerHTML = `
+    <span class="vf-alert-urgent__icon">🚨</span>
+    <span class="vf-alert-urgent__text">${message}</span>
+  `;
+  container.appendChild(el);
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/**
+ * Accordion 열기/닫기
+ * @param {HTMLElement} accordion
+ * @param {boolean} open
+ */
+function toggleAccordion(accordion, open) {
+  if (open) {
+    accordion.classList.add('open');
+    accordion.removeAttribute('hidden');
+  } else {
+    accordion.classList.remove('open');
+  }
+}
+
+/**
+ * 칩 버튼 단일 선택 처리
+ * @param {NodeList|HTMLElement[]} chips
+ * @param {function} onChange - (selectedValue) => void
+ */
+function initSingleSelect(chips, onChange) {
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      onChange(chip.dataset.value);
+    });
+  });
+}
+
+/**
+ * 칩 버튼 다중 선택 처리
+ * @param {NodeList|HTMLElement[]} chips
+ * @param {function} onChange - (selectedValues[]) => void
+ */
+function initMultiSelect(chips, onChange) {
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('selected');
+      const selected = [...chips]
+        .filter(c => c.classList.contains('selected'))
+        .map(c => c.dataset.value);
+      onChange(selected);
+    });
+  });
+}
+
+/**
+ * 진행 바 업데이트
+ * @param {number} percent - 0~100
+ */
+function updateProgressBar(percent) {
+  const bar = document.querySelector('.vf-progress__bar');
+  if (bar) bar.style.width = percent + '%';
+}
+
+// ============================================================
+// Export (모듈 사용 시) / 전역 노출 (스크립트 직접 사용)
+// ============================================================
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    Storage, Router, BRANCH_MAP, TERM_MAP,
+    toClinicTerm, buildSlackMessage, buildSheetsRow, submitForm,
+    showUrgentAlert, toggleAccordion, initSingleSelect, initMultiSelect,
+    updateProgressBar
+  };
+} else {
+  // 브라우저 전역
+  window.VF = {
+    Storage, Router, BRANCH_MAP, TERM_MAP,
+    toClinicTerm, buildSlackMessage, buildSheetsRow, submitForm,
+    showUrgentAlert, toggleAccordion, initSingleSelect, initMultiSelect,
+    updateProgressBar
+  };
+}
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ── 전체 데이터 로드 ────────────────────────────────────────
+  const allData = Storage.getAll();
+
+  // ── 요약 카드 렌더링 ─────────────────────────────────────────
+  function renderSummary() {
+    const card = document.getElementById('summary-card');
+    const s  = allData.signalment        || {};
+    const cc = allData.chief_complaint   || {};
+    const sr = allData.systems_review    || {};
+    const h  = allData.history           || {};
+    const pv = allData.prevention        || {};
+    const de = allData.diet_env          || {};
+    const m  = allData.memo              || {};
+
+    const rows = [];
+
+    // Signalment
+    rows.push({ type: 'label', text: '기본 정보' });
+    const sex     = s.sex     || '-';
+    const neuter  = s.neutered === '했음' ? '중성화 O' : s.neutered === '안 함' ? '중성화 X' : '';
+    const age     = s.age ? `${s.age}${s.age_unit || '년'}` : '-';
+    rows.push({ label: '환자',    value: `${s.name || '-'} / ${s.breed || '-'} / ${sex} ${neuter} / ${age}` });
+    rows.push({ label: '체중',    value: s.weight ? `${s.weight} kg` : '미입력' });
+    rows.push({ label: '보호자',  value: s.owner_name || '-' });
+
+    // Chief Complaint
+    rows.push({ type: 'label', text: '주호소' });
+    rows.push({ label: '내용',  value: cc.reason || '-' });
+    rows.push({ label: '경과',  value: [cc.since, cc.course, cc.severity].filter(Boolean).join(' / ') || '-' });
+    if (cc.recurrence === '재발') {
+      rows.push({ label: '재발', value: cc.recurrence_when || '시기 미입력' });
+    }
+
+    // 계통 리뷰
+    rows.push({ type: 'label', text: '증상 체크' });
+    if (sr.selected && sr.selected.length > 0) {
+      const labels = sr.selected.map(k => BRANCH_MAP[k] ? BRANCH_MAP[k].emoji + ' ' + BRANCH_MAP[k].label : k);
+      rows.push({ label: '선택 증상', value: labels.join(', ') });
+    } else {
+      rows.push({ label: '선택 증상', value: '없음' });
+    }
+    if (sr.other) rows.push({ label: '기타', value: sr.other });
+
+    // Branch 완료 목록
+    const branchKeys = Object.keys(allData).filter(k => k.startsWith('branch_'));
+    if (branchKeys.length > 0) {
+      rows.push({ type: 'label', text: '상세 문진 완료' });
+      branchKeys.forEach(bk => {
+        const key  = bk.replace('branch_', '');
+        const info = BRANCH_MAP[key];
+        if (info) rows.push({ label: info.emoji + ' ' + info.label, value: '답변 완료' });
+      });
+    }
+
+    // 과거력
+    rows.push({ type: 'label', text: '과거력' });
+    const condVal = h.conditions === '있음' ? (h.conditions_detail || '있음') : (h.conditions || '-');
+    const surgVal = h.surgeries  === '있음' ? (h.surgeries_detail  || '있음') : (h.surgeries  || '-');
+    const medVal  = h.medications_yn === '있음' ? (h.medications || '있음') : '없음';
+    rows.push({ label: '기저질환', value: condVal });
+    rows.push({ label: '수술이력', value: surgVal });
+    rows.push({ label: '현재 투약', value: medVal });
+    if (h.allergies === '있음') {
+      rows.push({ label: '알레르기', value: h.allergies_detail || '있음' });
+    }
+
+    // 예방·환경 (있는 것만)
+    const pvItems = [pv.vaccine, pv.heartworm && `심장사상충 ${pv.heartworm}`, pv.parasite && `외부기생충 ${pv.parasite}`].filter(Boolean);
+    if (pvItems.length) {
+      rows.push({ type: 'label', text: '예방 관리' });
+      rows.push({ label: '예방', value: pvItems.join(' / ') });
+    }
+
+    const deItems = [de.diet, de.living, de.housemates && `동거동물 ${de.housemates}`].filter(Boolean);
+    if (deItems.length) {
+      rows.push({ type: 'label', text: '식이·환경' });
+      rows.push({ label: '환경', value: deItems.join(' / ') });
+    }
+
+    // 추가 메모
+    if (m.text) {
+      rows.push({ type: 'label', text: '추가 메모' });
+      rows.push({ label: '메모', value: m.text });
+    }
+
+    // 렌더
+    card.innerHTML = rows.map(r => {
+      if (r.type === 'label') {
+        return `<div class="summary-section-label">${r.text}</div>`;
+      }
+      return `
+        <div class="vf-summary-card__body" style="padding:6px 18px">
+          <div class="vf-summary-row">
+            <span class="vf-summary-row__label">${r.label}</span>
+            <span class="vf-summary-row__value">${r.value}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  renderSummary();
+
+  // ── 제출 처리 ────────────────────────────────────────────────
+  async function handleSubmit() {
+    const btn = document.getElementById('btn-submit');
+    const failBox = document.getElementById('fail-box');
+
+    // 버튼 로딩 상태
+    btn.innerHTML = '<span class="vf-spinner"></span>전송 중...';
+    btn.classList.add('vf-btn--submitting');
+    failBox.style.display = 'none';
+
+    const result = await submitForm(allData);
+
+    if (result.ok) {
+      showSuccess();
+    } else {
+      // 실패 처리
+      btn.innerHTML = '다시 시도하기';
+      btn.classList.remove('vf-btn--submitting');
+      failBox.style.display = 'block';
+      failBox.innerHTML = `
+        <strong>전송에 실패했습니다.</strong><br>
+        문진 내용은 이 기기에 임시저장되었습니다.<br>
+        네트워크를 확인 후 다시 시도해주세요.
+        <br><small style="color:#B91C1C">오류: ${result.error || '알 수 없는 오류'}</small>
+      `;
+    }
+  }
+
+  function showSuccess() {
+    document.getElementById('main-screen').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    // sessionStorage 정리
+    Storage.clearAll();
+  }
+
+  // window에 노출
+  window.handleSubmit = handleSubmit;
+
+  // ── 임시저장 데이터 복구 안내 ────────────────────────────────
+  const temp = Storage.getTemp();
+  if (temp) {
+    const savedAt = new Date(temp.savedAt).toLocaleString('ko-KR');
+    const banner = document.createElement('div');
+    banner.className = 'vf-fail-box';
+    banner.style.marginTop = '12px';
+    banner.innerHTML = `
+      이전 전송 실패 데이터가 있습니다 (${savedAt}).<br>
+      <button onclick="retryTemp()" style="margin-top:8px;padding:8px 14px;background:var(--color-primary);color:white;border:none;border-radius:8px;font-size:13px;cursor:pointer">임시저장 데이터로 재시도</button>
+    `;
+    document.querySelector('.vf-page').insertBefore(banner, document.querySelector('.vf-summary-card'));
+
+    window.retryTemp = async function() {
+      const tempData = Storage.getTemp();
+      if (!tempData) return;
+      const result = await submitForm(tempData.data);
+      if (result.ok) showSuccess();
+    };
+  }
+
+});
+</script>
+</body>
+</html>

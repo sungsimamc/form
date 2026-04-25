@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>VetForm — 기력저하</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="vf-header">
+  <div><div class="vf-header__logo">🐾 VetForm</div><div class="vf-header__subtitle">증상 상세 문진</div></div>
+</header>
+<div class="vf-progress"><div class="vf-progress__bar" id="progressBar" style="width:0%"></div></div>
+<div class="vf-page">
+  <div class="vf-page-title vf-mt-md">
+    <div class="vf-page-title__label">Branch 4</div>
+    <div class="vf-page-title__h1">😴 기력저하</div>
+    <div class="vf-page-title__desc">기력 저하에 대해 조금 더 알려주세요.</div>
+  </div>
+
+  <section class="vf-section vf-mt-md">
+    <div class="vf-section__header"><span class="vf-section__icon">🕐</span><span class="vf-section__title">발생 양상</span></div>
+    <div class="vf-section__body">
+      <div class="vf-field">
+        <label class="vf-label">언제부터인가요?</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="since" data-value="오늘">오늘</button>
+          <button class="vf-chip" data-group="since" data-value="2~3일">2~3일</button>
+          <button class="vf-chip" data-group="since" data-value="1주일">1주일</button>
+          <button class="vf-chip" data-group="since" data-value="1달 이상">1달 이상</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">어느 정도인가요?</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="degree" data-value="약간 처짐">약간 처짐</button>
+          <button class="vf-chip" data-group="degree" data-value="많이 처짐">많이 처짐</button>
+          <button class="vf-chip" data-group="degree" data-value="거의 움직이지 않음">거의 움직이지 않음</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">패턴</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="pattern" data-value="계속 처져있음">계속 처져있음</button>
+          <button class="vf-chip" data-group="pattern" data-value="시간대에 따라 다름">시간대에 따라 다름</button>
+          <button class="vf-chip" data-group="pattern" data-value="점점 심해짐">점점 심해짐</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vf-section vf-mt-md">
+    <div class="vf-section__header"><span class="vf-section__icon">🛋️</span><span class="vf-section__title">행동 변화 세부</span></div>
+    <div class="vf-section__body">
+      <div class="vf-field">
+        <label class="vf-label">산책 / 놀이 반응</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="activity" data-value="평소와 비슷">평소와 비슷</button>
+          <button class="vf-chip" data-group="activity" data-value="예전보다 줄었음">예전보다 줄었음</button>
+          <button class="vf-chip" data-group="activity" data-value="거의 안 하려 함">거의 안 하려 함</button>
+          <button class="vf-chip" data-group="activity" data-value="완전히 거부">완전히 거부</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">자는 시간</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="sleep" data-value="평소와 비슷">평소와 비슷</button>
+          <button class="vf-chip" data-group="sleep" data-value="늘었음">늘었음</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">숨으려는 행동</label>
+        <div class="vf-hint">고양이에서 특히 중요 — 통증·중증 시사</div>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="hiding" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="hiding" data-value="있음">있음</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">불렀을 때 반응</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="response" data-value="정상">정상</button>
+          <button class="vf-chip" data-group="response" data-value="느림">느림</button>
+          <button class="vf-chip" data-group="response" data-value="거의 반응 없음">거의 반응 없음</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vf-section vf-mt-md">
+    <div class="vf-section__header"><span class="vf-section__icon">🏃</span><span class="vf-section__title">운동 불내성</span></div>
+    <div class="vf-section__body">
+      <div class="vf-field">
+        <label class="vf-label">조금만 움직여도 숨이 차 보이거나 힘들어 보이나요?</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="exercise_dyspnea" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="exercise_dyspnea" data-value="있음">있음</button>
+          <button class="vf-chip" data-group="exercise_dyspnea" data-value="모름">모름</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">산책 중 갑자기 주저앉거나 못 걷겠다고 하나요?</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="walk_collapse" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="walk_collapse" data-value="있음">있음</button>
+          <button class="vf-chip" data-group="walk_collapse" data-value="산책 안 함">산책 안 함</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">놀다가 금방 지쳐서 눕나요?</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="quick_fatigue" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="quick_fatigue" data-value="있음">있음</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vf-section vf-mt-md">
+    <div class="vf-section__header"><span class="vf-section__icon">🔗</span><span class="vf-section__title">동반 증상</span></div>
+    <div class="vf-section__body">
+      <div class="vf-field">
+        <label class="vf-label">식욕 변화</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="appetite" data-value="정상">정상</button>
+          <button class="vf-chip" data-group="appetite" data-value="감소">감소</button>
+          <button class="vf-chip" data-group="appetite" data-value="안 먹음">안 먹음</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">구토 동반</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="vomiting" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="vomiting" data-value="있음">있음</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">설사 동반</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="diarrhea" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="diarrhea" data-value="있음">있음</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">호흡 변화</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="breathing" data-value="정상">정상</button>
+          <button class="vf-chip" data-group="breathing" data-value="빨라 보임">빨라 보임</button>
+          <button class="vf-chip" data-group="breathing" data-value="힘겨워 보임">힘겨워 보임</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">통증 징후 (만지면 피함, 움츠림, 신음)</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="pain" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="pain" data-value="있는 것 같음">있는 것 같음</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">체온 이상 느낌</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="temp" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="temp" data-value="뜨거운 것 같음">뜨거운 것 같음</button>
+          <button class="vf-chip" data-group="temp" data-value="차가운 것 같음">차가운 것 같음</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vf-section vf-mt-md">
+    <div class="vf-section__header"><span class="vf-section__icon">⚠️</span><span class="vf-section__title">위험 신호</span></div>
+    <div class="vf-section__body">
+      <div class="vf-field">
+        <label class="vf-label">잇몸 색깔</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="gum_color" data-value="분홍색(정상)">분홍색 (정상)</button>
+          <button class="vf-chip" data-group="gum_color" data-value="창백함">창백함</button>
+          <button class="vf-chip" data-group="gum_color" data-value="흰색">흰색</button>
+          <button class="vf-chip" data-group="gum_color" data-value="파랗거나 보라색">파랗거나 보라색</button>
+          <button class="vf-chip" data-group="gum_color" data-value="모름">모름</button>
+        </div>
+        <div class="vf-accordion" id="acc-gum-urgent">
+          <div class="vf-accordion__inner"><div id="urgent-gum"></div></div>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">쓰러지거나 일어나지 못함</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="collapse" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="collapse" data-value="있음">있음</button>
+        </div>
+      </div>
+      <div class="vf-field">
+        <label class="vf-label">최근 외상 가능성</label>
+        <div class="vf-chips">
+          <button class="vf-chip" data-group="trauma" data-value="없음">없음</button>
+          <button class="vf-chip" data-group="trauma" data-value="있음">있음</button>
+          <button class="vf-chip" data-group="trauma" data-value="모름">모름</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vf-section vf-mt-md">
+    <div class="vf-section__header"><span class="vf-section__icon">💬</span><span class="vf-section__title">추가 전달 사항</span><span class="vf-section__badge vf-section__badge--optional">선택</span></div>
+    <div class="vf-section__body">
+      <textarea class="vf-textarea" id="f-notes" placeholder="기력저하에 대해 추가로 전달하고 싶은 내용을 적어주세요" rows="3"></textarea>
+    </div>
+  </section>
+</div>
+
+<div class="vf-bottom-bar">
+  <button class="vf-btn vf-btn--secondary" onclick="history.back()">← 이전</button>
+  <button class="vf-btn vf-btn--primary" onclick="handleNext()">다음 →</button>
+</div>
+
+<script>
+/* utils.js 인라인 */
+/**
+ * VetForm — utils.js
+ * 공통 유틸리티: sessionStorage 관리, Slack 용어 변환, 라우팅 헬퍼
+ */
+
+
+// ============================================================
+// 1. sessionStorage 헬퍼
+// ============================================================
+
+const VF_PREFIX = 'vetform_';
+
+const Storage = {
+  /** 섹션 데이터 저장 */
+  set(section, data) {
+    try {
+      sessionStorage.setItem(VF_PREFIX + section, JSON.stringify(data));
+    } catch (e) {
+      console.warn('[VetForm] sessionStorage 저장 실패, localStorage 폴백:', e);
+      try { localStorage.setItem(VF_PREFIX + section, JSON.stringify(data)); } catch (_) {}
+    }
+  },
+
+  /** 섹션 데이터 불러오기 */
+  get(section) {
+    try {
+      const v = sessionStorage.getItem(VF_PREFIX + section);
+      return v ? JSON.parse(v) : null;
+    } catch (e) {
+      try {
+        const v = localStorage.getItem(VF_PREFIX + section);
+        return v ? JSON.parse(v) : null;
+      } catch (_) { return null; }
+    }
+  },
+
+  /** 전체 VetForm 데이터 병합하여 반환 */
+  getAll() {
+    const result = {};
+    const keys = [
+      'signalment', 'chief_complaint', 'systems_review',
+      'history', 'prevention', 'diet_env', 'memo',
+      'branch_vomiting', 'branch_diarrhea', 'branch_anorexia',
+      'branch_lethargy', 'branch_dyspnea', 'branch_cough',
+      'branch_urinary', 'branch_lameness', 'branch_skin',
+      'branch_ear', 'branch_eye', 'branch_abdomen',
+      'branch_seizure', 'branch_syncope', 'branch_dental',
+      'branch_nasal'
+    ];
+    keys.forEach(k => {
+      const v = this.get(k);
+      if (v) result[k] = v;
+    });
+    return result;
+  },
+
+  /** 임시저장 (제출 실패 시) */
+  saveTemp(data) {
+    try {
+      localStorage.setItem(VF_PREFIX + 'temp_submission', JSON.stringify({
+        data,
+        savedAt: new Date().toISOString()
+      }));
+    } catch (e) {}
+  },
+
+  /** 임시저장 불러오기 */
+  getTemp() {
+    try {
+      const v = localStorage.getItem(VF_PREFIX + 'temp_submission');
+      return v ? JSON.parse(v) : null;
+    } catch (e) { return null; }
+  },
+
+  /** 임시저장 삭제 */
+  clearTemp() {
+    try { localStorage.removeItem(VF_PREFIX + 'temp_submission'); } catch (e) {}
+  },
+
+  /** 전체 초기화 */
+  clearAll() {
+    try {
+      Object.keys(sessionStorage)
+        .filter(k => k.startsWith(VF_PREFIX))
+        .forEach(k => sessionStorage.removeItem(k));
+    } catch (e) {}
+  }
+};
+
+// ============================================================
+// 2. Branch 라우팅
+// ============================================================
+
+/** 계통 리뷰 선택 → branch 파일명 매핑 */
+const BRANCH_MAP = {
+  'anorexia':  { file: 'anorexia.html',  label: '식욕부진',     emoji: '🍽️' },
+  'vomiting':  { file: 'vomiting.html',  label: '구토',         emoji: '🤢' },
+  'diarrhea':  { file: 'diarrhea.html',  label: '설사',         emoji: '💩' },
+  'urinary':   { file: 'urinary.html',   label: '배뇨 이상',    emoji: '🐾' },
+  'dyspnea':   { file: 'dyspnea.html',   label: '호흡곤란',     emoji: '😮‍💨' },
+  'lameness':  { file: 'lameness.html',  label: '파행',         emoji: '🦵' },
+  'lethargy':  { file: 'lethargy.html',  label: '기력저하',     emoji: '😴' },
+  'seizure':   { file: 'seizure.html',   label: '발작',         emoji: '🧠' },
+  'syncope':   { file: 'syncope.html',   label: '기절',         emoji: '😵' },
+  'abdomen':   { file: 'abdomen.html',   label: '복부 팽만',    emoji: '🫃' },
+  'skin':      { file: 'skin.html',      label: '피부 이상',    emoji: '🔴' },
+  'ear':       { file: 'ear.html',       label: '귀 이상',      emoji: '👂' },
+  'eye':       { file: 'eye.html',       label: '눈 이상',      emoji: '👁️' },
+  'cough':     { file: 'cough.html',     label: '기침',         emoji: '😮' },
+  'dental':    { file: 'dental.html',    label: '구강·치과 이상',emoji: '🦷' },
+  'nasal':     { file: 'nasal.html',     label: '콧물·재채기',  emoji: '🤧' },
+};
+
+const Router = {
+  /**
+   * 선택된 branch 목록 저장
+   * @param {string[]} branchKeys - BRANCH_MAP의 키 배열
+   */
+  setBranches(branchKeys) {
+    Storage.set('routing', {
+      branches: branchKeys,
+      completed: [],
+      currentIndex: 0
+    });
+  },
+
+  /** 현재 라우팅 상태 */
+  getRouting() {
+    return Storage.get('routing') || { branches: [], completed: [], currentIndex: 0 };
+  },
+
+  /** branch 완료 처리 후 다음으로 이동 */
+  completeCurrent() {
+    const routing = this.getRouting();
+    const current = routing.branches[routing.currentIndex];
+    if (current && !routing.completed.includes(current)) {
+      routing.completed.push(current);
+    }
+    routing.currentIndex += 1;
+    Storage.set('routing', routing);
+
+    if (routing.currentIndex < routing.branches.length) {
+      const next = routing.branches[routing.currentIndex];
+      const info = BRANCH_MAP[next];
+      if (info) {
+        window.location.href = '../branches/' + info.file;
+      }
+    } else {
+      window.location.href = '../confirm.html';
+    }
+  },
+
+  /** branch 건너뛰기 */
+  skipCurrent() {
+    this.completeCurrent(); // 완료 없이 index만 올림
+  },
+
+  /** 추가 branch 동적 삽입 (동반 증상에서 추천) */
+  addBranchIfMissing(branchKey) {
+    const routing = this.getRouting();
+    if (!routing.branches.includes(branchKey) && !routing.completed.includes(branchKey)) {
+      // 현재 이후에 삽입
+      routing.branches.splice(routing.currentIndex + 1, 0, branchKey);
+      Storage.set('routing', routing);
+      return true;
+    }
+    return false;
+  },
+
+  /** 진행률 (0~1) */
+  getProgress() {
+    const routing = this.getRouting();
+    const total = routing.branches.length;
+    if (total === 0) return 1;
+    return routing.completed.length / total;
+  },
+
+  /** 현재 branch key */
+  getCurrentKey() {
+    const routing = this.getRouting();
+    return routing.branches[routing.currentIndex] || null;
+  }
+};
+
+// ============================================================
+// 3. Slack 용어 변환
+// ============================================================
+
+/**
+ * 보호자 표현 → 임상 용어 변환 사전
+ * 값이 null이면 그대로 출력
+ */
+const TERM_MAP = {
+  // 구토 관련
+  '노란 액체(담즙)':          'bilious fluid',
+  '투명한 거품/액체':          'clear foam/fluid',
+  '소화 안 된 음식':           'undigested food',
+  '소화된 음식':               'digested food',
+  '이물질':                   'foreign material',
+  '구토 시 매우 힘들어 보임':   'severe retching/straining',
+  '헛구역질':                  'retching',
+
+  // 배변 관련
+  '배에 힘을 주는 모습':        'tenesmus',
+  '변에 섞임':                 'hematochezia (mixed)',
+  '변 위에 묻어남':            'hematochezia (coating)',
+  '검은색':                    'melena',
+  '붉은색(혈변)':              'hematochezia',
+  '점액 섞임':                 'mucoid stool',
+  '물처럼':                    'watery diarrhea',
+  '죽처럼':                    'semi-liquid stool',
+
+  // 호흡 관련
+  '배를 많이 씀':              'abdominal breathing',
+  '입을 벌리고 숨쉼':          'open-mouth breathing',
+  '목을 빼고 숨쉼':            'orthopnea/neck extension',
+  '쌕쌕 소리 남':              'wheezing',
+  '그르렁 소리 남':            'stertor',
+  '누울 때 악화':              'orthopnea',
+  '운동/흥분 시 악화':         'exercise intolerance',
+
+  // 기침 관련
+  '컹컹(건성)':                'dry/harsh cough',
+  '캑캑(뭔가 걸린 듯)':        'productive-sounding cough',
+  '거위 울음소리':             'goose-honk cough (tracheal collapse)',
+  '가래 끓는 소리':            'moist/productive cough',
+  '역재채기':                  'reverse sneezing',
+  '사레들림':                  'aspiration',
+
+  // 신경계 관련
+  '머리가 한쪽으로 기울어짐':   'head tilt',
+  '눈이 떨리거나 빠르게 움직임':'nystagmus',
+  '비틀거림':                  'ataxia',
+  '온몸이 뻣뻣하게 굳음':      'tonic seizure',
+  '온몸을 떰':                 'clonic seizure',
+  '한쪽만 떨거나 움직임':       'focal seizure',
+  '씹는 동작 반복':            'masticatory automatism',
+  '멍하게 있음':               'absence/staring seizure',
+  '발작 전 이상 행동':         'pre-ictal aura',
+  '발작 후 멍함':              'post-ictal phase',
+  '갑자기 푹 쓰러짐':          'sudden collapse (syncope)',
+
+  // 순환기 관련
+  '잇몸 파란색':               'cyanosis',
+  '잇몸 창백':                 'pale mucous membranes',
+  '잇몸 흰색':                 'white/blanched MM',
+  '잇몸 분홍(정상)':           'pink MM (WNL)',
+  '운동 불내성':               'exercise intolerance',
+  '기절':                      'syncope',
+
+  // 배뇨 관련
+  '자주 봄':                   'pollakiuria',
+  '조금씩 봄':                 'oliguria',
+  '못 보는 것 같음':           'anuria/urethral obstruction suspected',
+  '소변 볼 때 힘 줌':          'dysuria/stranguria',
+  '붉은색·분홍색':             'hematuria',
+  '음수량 증가':               'polydipsia',
+
+  // 피부 관련
+  '빨개짐':                    'erythema',
+  '딱지':                      'crusting',
+  '진물':                      'exudate/weeping',
+  '뾰루지·농포':               'papule/pustule',
+  '비듬·각질':                 'scaling',
+  '덩어리·혹':                 'mass/nodule',
+  '가려워함(심하게)':          'severe pruritus',
+  '가려워함(약간)':            'mild pruritus',
+
+  // 귀 관련
+  '귀를 자주 긁음':            'otic pruritus',
+  '머리를 흔듦':               'head shaking',
+  '귀에서 냄새 남':            'malodorous ear discharge',
+  '귀가 풍선처럼 부풀어 있음': 'aural hematoma',
+
+  // 눈 관련
+  '눈을 못 뜸·찡그림':         'blepharospasm',
+  '눈이 흐리거나 뿌옇게 보임': 'corneal opacity/clouding',
+  '눈이 튀어나온 것 같음':     'exophthalmos/proptosis',
+  '눈이 작아진 것 같음':       'enophthalmos/microphthalmos',
+  '빛을 피하거나 눈부셔 함':   'photophobia',
+
+  // 소화기 관련
+  '복부 팽만':                 'abdominal distension',
+  '이급후증':                  'tenesmus',
+  '황달':                      'icterus/jaundice',
+  '배를 만지면 싫어함':        'abdominal pain/guarding',
+  '배가 불러 보임':            'abdominal distension',
+  '북소리처럼 울림':           'tympanic sound on percussion',
+
+  // 전신
+  '기력 처짐':                 'lethargy',
+  '많이 처짐':                 'severe depression',
+  '거의 움직이지 않음':        'obtundation',
+  '체중 감소':                 'weight loss',
+  '숨으려는 행동':             'hiding behavior',
+};
+
+/**
+ * 보호자 표현을 임상 용어로 변환
+ * @param {string} text - 원본 텍스트
+ * @returns {string} 변환된 텍스트 (매핑 없으면 원본 반환)
+ */
+function toClinicTerm(text) {
+  if (!text) return text;
+  let result = text;
+  Object.entries(TERM_MAP).forEach(([kor, eng]) => {
+    if (result.includes(kor)) {
+      result = result.replace(kor, `${kor}(${eng})`);
+    }
+  });
+  return result;
+}
+
+// ============================================================
+// 4. Slack 메시지 빌더
+// ============================================================
+
+function buildSlackMessage(allData) {
+  const { signalment: s, chief_complaint: cc, systems_review: sr, history: h,
+          prevention: pv, diet_env: de, memo } = allData;
+
+  const lines = [];
+
+  // 헤더
+  lines.push('🐾 *신규 문진 접수*');
+  lines.push('─'.repeat(28));
+
+  // Signalment
+  if (s) {
+    const sex = s.sex ? (s.sex === '수컷' ? 'M' : 'F') : '';
+    const neuter = s.neutered === '했음' ? 'N' : s.neutered === '안 함' ? 'I' : '';
+    const age = s.age ? `${s.age}${s.age_unit === '개월' ? 'mo' : 'y'}` : '';
+    const sexStr = [sex, neuter].filter(Boolean).join('/');
+    lines.push(`*환자명:* ${s.name || '-'}  (${[sexStr, age, s.breed].filter(Boolean).join(', ')})`);
+    lines.push(`*보호자:* ${s.owner_name || '-'}`);
+    if (s.weight) lines.push(`*체중:* ${s.weight} kg`);
+  }
+
+  // Chief Complaint
+  if (cc) {
+    lines.push('');
+    lines.push(`*주호소:* ${cc.reason || '-'}`);
+    const duration = cc.since ? `(${cc.since})` : '';
+    const severity = cc.severity || '';
+    const course = cc.course || '';
+    lines.push(`*경과:* ${[duration, course, severity].filter(Boolean).join(' · ')}`);
+    if (cc.recurrence === '재발' && cc.recurrence_when) {
+      lines.push(`*재발:* ${cc.recurrence_when}`);
+    }
+  }
+
+  // Systems Review — 선택된 증상
+  if (sr && sr.selected && sr.selected.length > 0) {
+    lines.push('');
+    const labels = sr.selected.map(k => BRANCH_MAP[k] ? BRANCH_MAP[k].label : k);
+    lines.push(`*계통 리뷰:* ${labels.join(', ')}`);
+  }
+
+  // Branch 데이터
+  const branchKeys = Object.keys(allData).filter(k => k.startsWith('branch_'));
+  branchKeys.forEach(key => {
+    const branchKey = key.replace('branch_', '');
+    const info = BRANCH_MAP[branchKey];
+    const data = allData[key];
+    if (!data || !info) return;
+
+    lines.push('');
+    lines.push(`*[${info.label}]*`);
+    formatBranchForSlack(branchKey, data, lines);
+  });
+
+  // 과거력
+  if (h) {
+    lines.push('');
+    lines.push('*[과거력 / 투약]*');
+    if (h.conditions) lines.push(`• 기저질환: ${h.conditions}`);
+    if (h.surgeries)  lines.push(`• 수술이력: ${h.surgeries}`);
+    if (h.medications)lines.push(`• 투약: ${h.medications}`);
+    if (h.allergies)  lines.push(`• 알레르기: ${h.allergies}`);
+  }
+
+  // 예방
+  if (pv) {
+    const pvItems = [];
+    if (pv.vaccine)   pvItems.push(`백신 ${pv.vaccine}`);
+    if (pv.heartworm) pvItems.push(`심장사상충 ${pv.heartworm}`);
+    if (pv.parasite)  pvItems.push(`외부기생충 ${pv.parasite}`);
+    if (pvItems.length) lines.push(`*예방:* ${pvItems.join(' / ')}`);
+  }
+
+  // 식이·환경
+  if (de) {
+    const deItems = [];
+    if (de.diet)       deItems.push(`식이 ${de.diet}`);
+    if (de.living)     deItems.push(de.living);
+    if (de.housemates) deItems.push(`동거동물 ${de.housemates}`);
+    if (de.env_change) deItems.push(`환경변화 있음`);
+    if (deItems.length) lines.push(`*환경:* ${deItems.join(' / ')}`);
+  }
+
+  // 추가 메모
+  if (memo && memo.text) {
+    lines.push('');
+    lines.push(`*보호자 추가 메모:* ${memo.text}`);
+  }
+
+  lines.push('');
+  lines.push(`_문진 시각: ${new Date().toLocaleString('ko-KR')}_`);
+
+  return lines.join('\n');
+}
+
+/**
+ * Branch 데이터를 Slack 포맷으로 변환
+ * 각 branch는 key-value 객체이며, 임상 용어로 변환하여 출력
+ */
+function formatBranchForSlack(branchKey, data, lines) {
+  // 공통: 주요 필드 순서대로 출력
+  Object.entries(data).forEach(([key, value]) => {
+    if (!value || key === 'notes') return;
+    if (Array.isArray(value)) {
+      const converted = value.map(v => toClinicTerm(v)).join(', ');
+      lines.push(`• ${fieldLabel(key)}: ${converted}`);
+    } else if (typeof value === 'string' && value !== '없음' && value !== '정상') {
+      lines.push(`• ${fieldLabel(key)}: ${toClinicTerm(value)}`);
+    }
+  });
+  if (data.notes) {
+    lines.push(`• 추가: ${data.notes}`);
+  }
+}
+
+/** 내부 필드명 → 한국어 레이블 */
+function fieldLabel(key) {
+  const map = {
+    since: '언제부터', frequency: '빈도', pattern: '패턴',
+    content: '내용물', blood: '혈액', severity: '중증도',
+    appetite: '식욕', water: '음수', energy: '기력',
+    foreign_body: '이물섭취', toxin: '독성물질', notes: '추가',
+    stool_consistency: '변굳기', stool_color: '변색깔',
+    mucus: '점액', hematochezia: '혈변',
+    location: '부위', characteristics: '병변양상', pruritus: '소양감',
+    odor: '냄새', side: '어느쪽', discharge_color: '분비물색깔',
+    onset: '발생계기', limb: '어느다리', wbc: '방광',
+    urine_color: '소변색깔', dysuria: '배뇨시통증',
+    duration: '지속시간', postictal: '발작후 상태', aura: '전구증상',
+    collapse_type: '쓰러질때모습', recovery: '회복시간',
+  };
+  return map[key] || key;
+}
+
+// ============================================================
+// 5. Google Sheets 행 빌더
+// ============================================================
+
+function buildSheetsRow(allData) {
+  const s = allData.signalment || {};
+  const cc = allData.chief_complaint || {};
+  const sr = allData.systems_review || {};
+
+  const selectedBranches = (sr.selected || [])
+    .map(k => BRANCH_MAP[k]?.label || k)
+    .join(', ');
+
+  return {
+    timestamp:      new Date().toISOString(),
+    patient_name:   s.name || '',
+    owner_name:     s.owner_name || '',
+    species:        s.species || '',
+    breed:          s.breed || '',
+    age:            s.age ? `${s.age}${s.age_unit}` : '',
+    sex:            s.sex || '',
+    neutered:       s.neutered || '',
+    weight:         s.weight || '',
+    chief_complaint:cc.reason || '',
+    duration:       cc.since || '',
+    systems:        selectedBranches,
+    conditions:     (allData.history || {}).conditions || '',
+    medications:    (allData.history || {}).medications || '',
+    raw_json:       JSON.stringify(allData)
+  };
+}
+
+// ============================================================
+// 6. 제출 (Cloudflare Workers 경유)
+// ============================================================
+
+/**
+ * Workers URL — 배포 후 실제 URL로 교체
+ * 개발 중에는 이 값을 직접 수정하거나 config 파일로 분리 가능
+ */
+const WORKERS_URL = 'https://hist-relay.simpson9713.workers.dev';
+
+/**
+ * 문진 데이터 제출 (재시도 3회)
+ * @param {object} allData
+ * @returns {Promise<{ok: boolean, error?: string}>}
+ */
+async function submitForm(allData) {
+  const slackText  = buildSlackMessage(allData);
+  const sheetsRow  = buildSheetsRow(allData);
+  const payload    = { slack: slackText, sheets: sheetsRow };
+
+  let lastError = null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(WORKERS_URL + '/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        Storage.clearTemp();
+        return { ok: true };
+      }
+      lastError = `HTTP ${res.status}`;
+    } catch (e) {
+      lastError = e.message;
+    }
+    if (attempt < 3) await sleep(attempt * 1200);
+  }
+
+  // 3회 실패 → 로컬 임시저장
+  Storage.saveTemp(allData);
+  return { ok: false, error: lastError };
+}
+
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+// ============================================================
+// 7. UI 헬퍼
+// ============================================================
+
+/**
+ * 즉시 내원 알림 표시
+ * @param {HTMLElement} container - 알림을 삽입할 부모 엘리먼트
+ * @param {string} message
+ */
+function showUrgentAlert(container, message) {
+  // 중복 방지
+  if (container.querySelector('.vf-alert-urgent')) return;
+  const el = document.createElement('div');
+  el.className = 'vf-alert-urgent';
+  el.innerHTML = `
+    <span class="vf-alert-urgent__icon">🚨</span>
+    <span class="vf-alert-urgent__text">${message}</span>
+  `;
+  container.appendChild(el);
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/**
+ * Accordion 열기/닫기
+ * @param {HTMLElement} accordion
+ * @param {boolean} open
+ */
+function toggleAccordion(accordion, open) {
+  if (open) {
+    accordion.classList.add('open');
+    accordion.removeAttribute('hidden');
+  } else {
+    accordion.classList.remove('open');
+  }
+}
+
+/**
+ * 칩 버튼 단일 선택 처리
+ * @param {NodeList|HTMLElement[]} chips
+ * @param {function} onChange - (selectedValue) => void
+ */
+function initSingleSelect(chips, onChange) {
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      onChange(chip.dataset.value);
+    });
+  });
+}
+
+/**
+ * 칩 버튼 다중 선택 처리
+ * @param {NodeList|HTMLElement[]} chips
+ * @param {function} onChange - (selectedValues[]) => void
+ */
+function initMultiSelect(chips, onChange) {
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('selected');
+      const selected = [...chips]
+        .filter(c => c.classList.contains('selected'))
+        .map(c => c.dataset.value);
+      onChange(selected);
+    });
+  });
+}
+
+/**
+ * 진행 바 업데이트
+ * @param {number} percent - 0~100
+ */
+function updateProgressBar(percent) {
+  const bar = document.querySelector('.vf-progress__bar');
+  if (bar) bar.style.width = percent + '%';
+}
+
+// ============================================================
+// Export (모듈 사용 시) / 전역 노출 (스크립트 직접 사용)
+// ============================================================
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    Storage, Router, BRANCH_MAP, TERM_MAP,
+    toClinicTerm, buildSlackMessage, buildSheetsRow, submitForm,
+    showUrgentAlert, toggleAccordion, initSingleSelect, initMultiSelect,
+    updateProgressBar
+  };
+} else {
+  // 브라우저 전역
+  window.VF = {
+    Storage, Router, BRANCH_MAP, TERM_MAP,
+    toClinicTerm, buildSlackMessage, buildSheetsRow, submitForm,
+    showUrgentAlert, toggleAccordion, initSingleSelect, initMultiSelect,
+    updateProgressBar
+  };
+}
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const state = {};
+  const URGENT_GUM = ['창백함','흰색','파랗거나 보라색'];
+
+  document.querySelectorAll('.vf-chip[data-group]').forEach(chip => {
+    chip.addEventListener('click', function() {
+      const group = this.dataset.group;
+      document.querySelectorAll(`.vf-chip[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+      this.classList.add('selected');
+      state[group] = this.dataset.value;
+
+      if (group === 'vomiting'         && this.dataset.value === '있음') Router.addBranchIfMissing('vomiting');
+      if (group === 'diarrhea'         && this.dataset.value === '있음') Router.addBranchIfMissing('diarrhea');
+      if (group === 'appetite'         && ['감소','안 먹음'].includes(this.dataset.value)) Router.addBranchIfMissing('anorexia');
+      if (group === 'breathing'        && this.dataset.value !== '정상') Router.addBranchIfMissing('dyspnea');
+      if (group === 'exercise_dyspnea' && this.dataset.value === '있음') Router.addBranchIfMissing('dyspnea');
+      if (group === 'walk_collapse'    && this.dataset.value === '있음') Router.addBranchIfMissing('dyspnea');
+      if (group === 'collapse'         && this.dataset.value === '있음') Router.addBranchIfMissing('syncope');
+      if (group === 'gum_color') {
+        const acc = document.getElementById('acc-gum-urgent');
+        toggleAccordion(acc, URGENT_GUM.includes(this.dataset.value));
+        if (URGENT_GUM.includes(this.dataset.value)) {
+          showUrgentAlert(document.getElementById('urgent-gum'), '잇몸 색깔 이상은 쇼크·빈혈·저산소증의 징후입니다. 즉시 내원해주세요.');
+        }
+      }
+    });
+  });
+
+  function handleNext() {
+    Storage.set('branch_lethargy', {
+      since: state.since, degree: state.degree, pattern: state.pattern,
+      activity: state.activity, sleep: state.sleep, hiding: state.hiding, response: state.response,
+      exercise_dyspnea: state.exercise_dyspnea, walk_collapse: state.walk_collapse, quick_fatigue: state.quick_fatigue,
+      appetite: state.appetite, vomiting: state.vomiting, diarrhea: state.diarrhea,
+      breathing: state.breathing, pain: state.pain, temp: state.temp,
+      gum_color: state.gum_color, collapse: state.collapse, trauma: state.trauma,
+      notes: document.getElementById('f-notes').value.trim(),
+    });
+    Router.completeCurrent();
+  }
+  window.handleNext = handleNext;
+  updateProgressBar(Math.round(Router.getProgress() * 100));
+});
+</script>
+</body>
+</html>
