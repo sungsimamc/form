@@ -1,61 +1,80 @@
 /* ============================================================
-   VetForm — style.css
-   소동물 임상용 디지털 문진 시스템
-   모바일 퍼스트, 보호자 친화적 디자인
+   VetForm — Sungsim Animal Medical Center Design System
+   디자인 전용 수정 파일
+   - 기존 HTML/JS 로직 변경 없음
+   - assets/style.css 전체 교체용
+   - assets/logo.png 필요
    ============================================================ */
 
-/* ---------- Google Fonts ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap');
+/* ---------- Fonts ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap');
 
 /* ---------- CSS Variables ---------- */
 :root {
-  /* Brand Colors */
-  --color-primary:       #3B82C4;   /* 메인 파랑 — 신뢰감 */
-  --color-primary-light: #EBF3FB;   /* 버튼 hover 배경 */
-  --color-primary-dark:  #2A6099;   /* 버튼 active */
+  /* Brand palette */
+  --color-canvas:        #FFFFFF;
+  --color-ink:           #222222;
+  --color-body:          #3F3F3F;
+  --color-muted:         #6A6A6A;
 
-  --color-accent:        #5BAD8F;   /* 초록 — 완료/정상 */
-  --color-warning:       #F59E0B;   /* 주의 */
-  --color-danger:        #EF4444;   /* 즉시 내원 알림 */
-  --color-danger-bg:     #FEF2F2;
-  --color-danger-border: #FECACA;
+  --color-primary:       #1E8CAA;
+  --color-primary-light: #E8F6FA;
+  --color-primary-mid:   #B3DDE8;
+  --color-primary-soft:  #F2FAFB;
 
-  /* Neutrals */
-  --color-bg:            #F7F8FA;
+  --color-alert:         #E6000A;
+  --color-alert-light:   #FFF0F0;
+  --color-alert-mid:     #FFD6D6;
+
+  --surface-soft:        #F7F7F7;
+  --surface-strong:      #F2F2F2;
+  --hairline:            #DDDDDD;
+  --hairline-dark:       #CCCCCC;
+
+  /* Backward-compatible aliases */
+  --color-bg:            var(--color-canvas);
   --color-surface:       #FFFFFF;
-  --color-border:        #E2E8F0;
-  --color-border-focus:  #3B82C4;
+  --color-border:        var(--hairline);
+  --color-border-focus:  var(--color-primary);
 
-  --color-text-primary:  #1E293B;
-  --color-text-secondary:#64748B;
-  --color-text-disabled: #CBD5E1;
+  --color-text-primary:  var(--color-ink);
+  --color-text-secondary:var(--color-muted);
+  --color-text-disabled: #A8A8A8;
+
+  --color-danger:        var(--color-alert);
+  --color-danger-bg:     var(--color-alert-light);
+  --color-danger-border: var(--color-alert-mid);
+
+  /* 기존 코드 호환. 실제 시각 색상은 teal/gray 계열로 제한 */
+  --color-accent:        var(--color-primary);
+  --color-warning:       var(--color-muted);
 
   /* Chip/Button states */
   --chip-bg:             #FFFFFF;
-  --chip-bg-selected:    #3B82C4;
+  --chip-bg-selected:    var(--color-primary);
   --chip-text-selected:  #FFFFFF;
-  --chip-border:         #CBD5E1;
-  --chip-border-selected:#3B82C4;
+  --chip-border:         var(--hairline-dark);
+  --chip-border-selected:var(--color-primary);
 
   /* Layout */
-  --max-width:           480px;
-  --page-padding:        20px;
-  --section-gap:         28px;
+  --max-width:           520px;
+  --page-padding:        18px;
+  --section-gap:         24px;
   --item-gap:            16px;
 
   /* Typography */
-  --font-korean:         'Noto Sans KR', sans-serif;
-  --font-latin:          'DM Sans', sans-serif;
+  --font-korean:         'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, 'Helvetica Neue', sans-serif;
+  --font-latin:          'Inter', -apple-system, BlinkMacSystemFont, system-ui, 'Helvetica Neue', sans-serif;
 
   /* Radius */
-  --radius-sm:           8px;
-  --radius-md:           12px;
-  --radius-lg:           16px;
-  --radius-chip:         100px;
+  --radius-sm:           10px;
+  --radius-md:           14px;
+  --radius-lg:           18px;
+  --radius-chip:         999px;
 
   /* Shadow */
-  --shadow-card:         0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
-  --shadow-chip-selected:0 2px 8px rgba(59,130,196,0.25);
+  --shadow-card:         0 1px 2px rgba(34,34,34,0.04);
+  --shadow-chip-selected:0 2px 8px rgba(30,140,170,0.18);
 
   /* Transition */
   --transition:          0.18s ease;
@@ -76,7 +95,7 @@ html {
 
 body {
   font-family: var(--font-korean);
-  background: var(--color-bg);
+  background: var(--color-canvas);
   color: var(--color-text-primary);
   min-height: 100vh;
   line-height: 1.6;
@@ -87,41 +106,72 @@ body {
 .vf-page {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 0 80px 0;  /* bottom: fixed button 공간 */
+  padding: 0 0 88px 0;
 }
 
-/* ---------- Header ---------- */
+/* ---------- Header ----------
+   HTML 변경 없이 기존 구조:
+   <header class="vf-header">
+     <div>
+       <div class="vf-header__logo">🐾 VetForm</div>
+       <div class="vf-header__subtitle">초진 문진표</div>
+     </div>
+   </header>
+   에 로고 이미지를 CSS로 삽입함
+   ------------------------------------------------------------ */
 .vf-header {
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: 16px var(--page-padding);
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--hairline);
+  padding: 12px var(--page-padding);
   position: sticky;
   top: 0;
   z-index: 100;
   display: flex;
   align-items: center;
-  gap: 10px;
+}
+
+.vf-header > div {
+  width: 100%;
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.vf-header > div::before {
+  content: '';
+  display: block;
+  height: 42px;
+  width: min(355px, 76vw);
+  background-image: url('logo.png');
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+  flex: 1 1 auto;
 }
 
 .vf-header__logo {
-  font-family: var(--font-latin);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-primary);
-  letter-spacing: -0.3px;
+  display: none !important;
 }
 
 .vf-header__subtitle {
+  flex: 0 0 auto;
   font-size: 13px;
-  color: var(--color-text-secondary);
+  font-weight: 800;
+  color: var(--color-muted);
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  padding-left: 8px;
+  border-left: 1px solid var(--hairline);
 }
 
-/* 진행 바 */
+/* ---------- Progress ---------- */
 .vf-progress {
   height: 3px;
-  background: var(--color-border);
+  background: var(--surface-strong);
   position: sticky;
-  top: 57px;
+  top: 68px;
   z-index: 99;
 }
 
@@ -134,49 +184,55 @@ body {
 /* ---------- Section Card ---------- */
 .vf-section {
   background: var(--color-surface);
-  margin: 12px var(--page-padding) 0;
+  margin: 14px var(--page-padding) 0;
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
 .vf-section__header {
-  padding: 18px 20px 14px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 17px 18px 13px;
+  border-bottom: 1px solid var(--hairline);
   display: flex;
   align-items: center;
   gap: 8px;
+  background: #FFFFFF;
 }
 
 .vf-section__icon {
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1;
+  filter: grayscale(1);
+  opacity: 0.75;
 }
 
 .vf-section__title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  letter-spacing: -0.2px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-ink);
+  letter-spacing: -0.3px;
 }
 
 .vf-section__badge {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 800;
   color: var(--color-primary);
   background: var(--color-primary-light);
-  border-radius: 100px;
+  border: 1px solid var(--color-primary-mid);
+  border-radius: 999px;
   padding: 2px 8px;
   margin-left: auto;
 }
 
 .vf-section__badge--optional {
-  color: var(--color-text-secondary);
-  background: var(--color-bg);
+  color: var(--color-muted);
+  background: var(--surface-soft);
+  border-color: var(--hairline);
 }
 
 .vf-section__body {
-  padding: 20px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: var(--item-gap);
@@ -191,48 +247,48 @@ body {
 
 .vf-label {
   font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.2px;
 }
 
 .vf-label--required::after {
   content: ' *';
-  color: var(--color-danger);
+  color: var(--color-primary);
 }
 
 .vf-hint {
   font-size: 12px;
-  color: var(--color-text-secondary);
+  color: var(--color-muted);
   margin-top: -4px;
 }
 
-/* Text Input */
+/* ---------- Inputs ---------- */
 .vf-input {
   width: 100%;
-  padding: 13px 16px;
+  padding: 13px 15px;
   font-family: var(--font-korean);
   font-size: 15px;
-  color: var(--color-text-primary);
-  background: var(--color-bg);
-  border: 1.5px solid var(--color-border);
+  color: var(--color-ink);
+  background: var(--surface-soft);
+  border: 1px solid var(--hairline-dark);
   border-radius: var(--radius-sm);
   outline: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
   appearance: none;
   -webkit-appearance: none;
 }
 
 .vf-input:focus {
-  border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(59,130,196,0.12);
-  background: var(--color-surface);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(30,140,170,0.12);
+  background: #FFFFFF;
 }
 
 .vf-input::placeholder {
-  color: var(--color-text-disabled);
+  color: #A0A0A0;
 }
 
-/* Number + Unit Row */
 .vf-input-row {
   display: flex;
   gap: 8px;
@@ -247,54 +303,55 @@ body {
   padding: 13px 12px;
   font-family: var(--font-korean);
   font-size: 14px;
-  color: var(--color-text-primary);
-  background: var(--color-bg);
-  border: 1.5px solid var(--color-border);
+  color: var(--color-ink);
+  background-color: var(--surface-soft);
+  border: 1px solid var(--hairline-dark);
   border-radius: var(--radius-sm);
   outline: none;
   cursor: pointer;
-  transition: border-color var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236A6A6A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   padding-right: 30px;
 }
 
 .vf-unit-select:focus {
-  border-color: var(--color-border-focus);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(30,140,170,0.12);
+  background-color: #FFFFFF;
 }
 
-/* Textarea */
+/* ---------- Textarea ---------- */
 .vf-textarea {
   width: 100%;
-  padding: 13px 16px;
+  padding: 13px 15px;
   font-family: var(--font-korean);
   font-size: 15px;
-  color: var(--color-text-primary);
-  background: var(--color-bg);
-  border: 1.5px solid var(--color-border);
+  color: var(--color-ink);
+  background: var(--surface-soft);
+  border: 1px solid var(--hairline-dark);
   border-radius: var(--radius-sm);
   outline: none;
   resize: vertical;
-  min-height: 90px;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  min-height: 96px;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
   line-height: 1.6;
 }
 
 .vf-textarea:focus {
-  border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(59,130,196,0.12);
-  background: var(--color-surface);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(30,140,170,0.12);
+  background: #FFFFFF;
 }
 
 .vf-textarea::placeholder {
-  color: var(--color-text-disabled);
+  color: #A0A0A0;
 }
 
 /* ---------- Chip Buttons ---------- */
-/* 단일/다중 선택 공용 */
 .vf-chips {
   display: flex;
   flex-wrap: wrap;
@@ -305,13 +362,13 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 10px 16px;
+  padding: 10px 15px;
   font-family: var(--font-korean);
   font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  background: var(--chip-bg);
-  border: 1.5px solid var(--chip-border);
+  font-weight: 600;
+  color: var(--color-body);
+  background: #FFFFFF;
+  border: 1px solid var(--hairline-dark);
   border-radius: var(--radius-chip);
   cursor: pointer;
   transition: all var(--transition);
@@ -326,32 +383,31 @@ body {
 }
 
 .vf-chip.selected {
-  background: var(--chip-bg-selected);
-  border-color: var(--chip-border-selected);
-  color: var(--chip-text-selected);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #FFFFFF;
   box-shadow: var(--shadow-chip-selected);
 }
 
-/* 체크아이콘 (다중선택용) */
 .vf-chip.selected .chip-check::before {
   content: '✓ ';
   font-size: 12px;
 }
 
-/* ---------- Symptom Check Grid (섹션3) ---------- */
+/* ---------- Symptom Check Grid ---------- */
 .vf-symptom-grid {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .vf-symptom-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
-  background: var(--color-bg);
-  border: 1.5px solid var(--color-border);
+  padding: 14px 15px;
+  background: var(--surface-soft);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition);
@@ -372,32 +428,33 @@ body {
   width: 28px;
   text-align: center;
   flex-shrink: 0;
+  filter: grayscale(0.25);
 }
 
 .vf-symptom-item__text {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   flex: 1;
-  color: var(--color-text-primary);
+  color: var(--color-body);
 }
 
 .vf-symptom-item__check {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  border: 2px solid var(--color-border);
+  border: 2px solid var(--hairline-dark);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--transition);
-  background: var(--color-surface);
+  background: #FFFFFF;
 }
 
 .vf-symptom-item.selected .vf-symptom-item__check {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: white;
+  color: #FFFFFF;
   font-size: 12px;
 }
 
@@ -405,7 +462,7 @@ body {
   content: '✓';
 }
 
-/* ---------- Accordion (조건부 펼침) ---------- */
+/* ---------- Accordion ---------- */
 .vf-accordion {
   overflow: hidden;
   max-height: 0;
@@ -425,21 +482,21 @@ body {
   gap: 8px;
 }
 
-/* ---------- Branch Card (섹션7) ---------- */
+/* ---------- Branch Card ---------- */
 .vf-branch-cards {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 20px;
+  padding: 18px;
 }
 
 .vf-branch-card {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px 18px;
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
+  padding: 15px 16px;
+  background: #FFFFFF;
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition);
@@ -454,17 +511,18 @@ body {
 .vf-branch-card:hover,
 .vf-branch-card:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59,130,196,0.10);
+  box-shadow: 0 0 0 3px rgba(30,140,170,0.10);
 }
 
 .vf-branch-card.done {
-  background: #F0FDF4;
-  border-color: var(--color-accent);
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary-mid);
 }
 
 .vf-branch-card__emoji {
   font-size: 22px;
   flex-shrink: 0;
+  filter: grayscale(0.25);
 }
 
 .vf-branch-card__text {
@@ -473,13 +531,13 @@ body {
 
 .vf-branch-card__title {
   font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-weight: 700;
+  color: var(--color-ink);
 }
 
 .vf-branch-card__sub {
   font-size: 12px;
-  color: var(--color-text-secondary);
+  color: var(--color-muted);
   margin-top: 2px;
 }
 
@@ -490,19 +548,20 @@ body {
 }
 
 .vf-branch-card.done .vf-branch-card__arrow {
-  color: var(--color-accent);
+  color: var(--color-primary);
 }
 
-/* 건너뛰기 버튼 */
+/* ---------- Skip Button ---------- */
 .vf-skip-btn {
   display: block;
   width: 100%;
   padding: 14px;
   font-family: var(--font-korean);
   font-size: 14px;
-  color: var(--color-text-secondary);
-  background: transparent;
-  border: 1.5px dashed var(--color-border);
+  font-weight: 600;
+  color: var(--color-muted);
+  background: #FFFFFF;
+  border: 1px dashed var(--hairline-dark);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition);
@@ -510,18 +569,19 @@ body {
 }
 
 .vf-skip-btn:hover {
-  background: var(--color-bg);
-  color: var(--color-text-primary);
+  background: var(--surface-soft);
+  color: var(--color-ink);
 }
 
-/* ---------- 즉시 내원 알림 ---------- */
+/* ---------- Urgent Alert ---------- */
 .vf-alert-urgent {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 14px 16px;
-  background: var(--color-danger-bg);
-  border: 1.5px solid var(--color-danger-border);
+  padding: 14px 15px;
+  background: var(--color-alert-light);
+  border: 1px solid var(--color-alert-mid);
+  border-left: 4px solid var(--color-alert);
   border-radius: var(--radius-sm);
   margin-top: 8px;
 }
@@ -534,17 +594,18 @@ body {
 
 .vf-alert-urgent__text {
   font-size: 14px;
-  font-weight: 600;
-  color: #991B1B;
+  font-weight: 700;
+  color: var(--color-alert);
   line-height: 1.5;
 }
 
-/* Branch 상단 응급 안내 배너 */
+/* ---------- Emergency Banner ---------- */
 .vf-emergency-banner {
   margin: 12px var(--page-padding) 0;
-  padding: 14px 18px;
-  background: #FFF7ED;
-  border: 1.5px solid #FED7AA;
+  padding: 14px 16px;
+  background: var(--color-alert-light);
+  border: 1px solid var(--color-alert-mid);
+  border-left: 4px solid var(--color-alert);
   border-radius: var(--radius-md);
   display: flex;
   gap: 10px;
@@ -553,15 +614,15 @@ body {
 
 .vf-emergency-banner__text {
   font-size: 13px;
-  font-weight: 600;
-  color: #92400E;
+  font-weight: 700;
+  color: var(--color-alert);
   line-height: 1.5;
 }
 
 /* ---------- Divider ---------- */
 .vf-divider {
   height: 1px;
-  background: var(--color-border);
+  background: var(--hairline);
   margin: 4px 0;
 }
 
@@ -571,8 +632,8 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
+  background: #FFFFFF;
+  border-top: 1px solid var(--hairline);
   padding: 12px var(--page-padding);
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
   z-index: 200;
@@ -587,7 +648,7 @@ body {
   padding: 15px;
   font-family: var(--font-korean);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -602,62 +663,64 @@ body {
 
 .vf-btn--primary {
   background: var(--color-primary);
-  color: white;
+  color: #FFFFFF;
 }
 
 .vf-btn--primary:hover {
-  background: var(--color-primary-dark);
+  background: #187D98;
 }
 
 .vf-btn--primary:disabled {
-  background: var(--color-text-disabled);
+  background: #CCCCCC;
   cursor: not-allowed;
   transform: none;
 }
 
 .vf-btn--secondary {
-  background: var(--color-bg);
-  color: var(--color-text-secondary);
-  border: 1.5px solid var(--color-border);
+  background: var(--surface-soft);
+  color: var(--color-body);
+  border: 1px solid var(--hairline-dark);
   flex: 0 0 auto;
   padding: 15px 20px;
 }
 
 .vf-btn--secondary:hover {
-  background: var(--color-border);
+  background: var(--surface-strong);
 }
 
-/* ---------- Page Title (Branch 상단) ---------- */
+/* ---------- Page Title ---------- */
 .vf-page-title {
   padding: 20px var(--page-padding) 0;
 }
 
 .vf-page-title__label {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 800;
   color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .vf-page-title__h1 {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--color-text-primary);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-ink);
   margin-top: 4px;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.6px;
+  line-height: 1.3;
 }
 
 .vf-page-title__desc {
   font-size: 13px;
-  color: var(--color-text-secondary);
+  color: var(--color-muted);
   margin-top: 4px;
 }
 
 /* ---------- Confirm Page ---------- */
 .vf-summary-card {
-  background: var(--color-surface);
+  background: #FFFFFF;
   margin: 12px var(--page-padding) 0;
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
   overflow: hidden;
@@ -667,9 +730,9 @@ body {
   padding: 14px 18px;
   background: var(--color-primary-light);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-primary);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-primary-mid);
 }
 
 .vf-summary-card__body {
@@ -686,15 +749,15 @@ body {
 
 .vf-summary-row__label {
   font-size: 13px;
-  color: var(--color-text-secondary);
+  color: var(--color-muted);
   min-width: 80px;
   flex-shrink: 0;
 }
 
 .vf-summary-row__value {
   font-size: 13px;
-  color: var(--color-text-primary);
-  font-weight: 500;
+  color: var(--color-ink);
+  font-weight: 600;
   flex: 1;
 }
 
@@ -704,7 +767,7 @@ body {
   width: 18px;
   height: 18px;
   border: 2.5px solid rgba(255,255,255,0.4);
-  border-top-color: white;
+  border-top-color: #FFFFFF;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   vertical-align: middle;
@@ -738,15 +801,15 @@ body {
 }
 
 .vf-success__title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  letter-spacing: -0.5px;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-ink);
+  letter-spacing: -0.6px;
 }
 
 .vf-success__desc {
   font-size: 14px;
-  color: var(--color-text-secondary);
+  color: var(--color-muted);
   line-height: 1.7;
 }
 
@@ -756,14 +819,89 @@ body {
 .vf-mt-lg  { margin-top: 24px; }
 .vf-hidden { display: none !important; }
 
-/* ---------- Responsive fallback (tablet+) ---------- */
+/* ---------- Inline page-specific components compatibility ----------
+   index.html 내부 <style>보다 안전하게 우선 적용하기 위해 !important 사용
+   ------------------------------------------------------------ */
+.species-btn {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--hairline-dark) !important;
+  background: #FFFFFF !important;
+  color: var(--color-ink) !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+}
+
+.species-btn.selected {
+  background: var(--color-primary-light) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+
+.species-btn .emoji {
+  filter: grayscale(0.2);
+}
+
+.section3-guide {
+  color: var(--color-muted) !important;
+  background: #FFFFFF;
+}
+
+.vf-branch-empty {
+  color: var(--color-muted) !important;
+}
+
+/* ---------- Responsive fallback ---------- */
 @media (min-width: 520px) {
   .vf-bottom-bar {
     left: 50%;
     transform: translateX(-50%);
     width: var(--max-width);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    border-left: 1px solid var(--color-border);
-    border-right: 1px solid var(--color-border);
+    border-left: 1px solid var(--hairline);
+    border-right: 1px solid var(--hairline);
+  }
+}
+
+@media (max-width: 420px) {
+  .vf-header > div::before {
+    height: 38px;
+    width: min(315px, 70vw);
+  }
+
+  .vf-header__subtitle {
+    font-size: 12px;
+  }
+
+  .vf-progress {
+    top: 64px;
+  }
+
+  .vf-section__title {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 360px) {
+  .vf-header {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .vf-header > div {
+    gap: 8px;
+  }
+
+  .vf-header > div::before {
+    height: 34px;
+    width: min(280px, 66vw);
+  }
+
+  .vf-header__subtitle {
+    font-size: 11px;
+    padding-left: 6px;
+  }
+
+  .vf-progress {
+    top: 60px;
   }
 }
