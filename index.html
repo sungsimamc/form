@@ -1388,7 +1388,7 @@ function handleNext() {
     window.location.href = 'branches/' + info.file;
   }
 }
-
+window.handleNext = handleNext;
 // 뒤로가기 시 상태 복원
 (function restore() {
   const s  = Storage.get('signalment') || {};
